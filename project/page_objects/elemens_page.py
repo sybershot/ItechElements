@@ -7,7 +7,8 @@ from itechframework.modules.robot_browser.browser_element import BrowserElement
 
 class ElementsPage(BasePage):
     ACCORDION_LIST_LOCATOR = '//div[@class="element-group"]/span'
-
+    PAGE_CONTENTS_LOCATOR = '//div[contains(@class, "md-6")]/div[not(contains(@class, "Advertisement"))]'
+    MENU_ELEMENTS_LOCATOR = '//div[contains(@class, "show")]/ul/li'
 
     def __init__(self, browser: Browser):
         super().__init__(browser)
@@ -17,7 +18,7 @@ class ElementsPage(BasePage):
         self.page_contents = None
 
     def get_element_list(self, parent: BrowserElement):
-        element_list = self.browser.find_elements('xpath', '//div[contains(@class, "show")]/ul/li')
+        element_list = self.browser.find_elements('xpath', self.MENU_ELEMENTS_LOCATOR)
         return element_list
 
     def open_menu(self, menu_element: BrowserElement):
@@ -25,13 +26,12 @@ class ElementsPage(BasePage):
             info(f'Menu element {menu_element.by} {menu_element.locator} is closed, opening now.')
             menu_element.move_to_element()
             menu_element.click_element()
-            self.browser.wait_until_visible('xpath', '//div[contains(@class, "show")]/ul/li')
+            self.browser.wait_until_visible('xpath', self.MENU_ELEMENTS_LOCATOR)
         self.menu_contents = self.get_element_list(menu_element)
 
     def open_submenu(self, submenu_element: BrowserElement):
         submenu_element.click_element()
-        self.page_contents = self.browser.find_element_or_raise('xpath', '//div[contains(@class, "md-6")]'
-                                                                         '/div[not(contains(@class, "Advertisement"))]')
+        self.page_contents = self.browser.find_element_or_raise('xpath', self.PAGE_CONTENTS_LOCATOR)
 
     def update_contents(self, by, locator):
         self.page_contents = self.browser.find_elements(by, locator)

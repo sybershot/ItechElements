@@ -9,11 +9,13 @@ from selenium.common.exceptions import NoSuchElementException
 
 from itechframework.configuration.constants import TIMEOUT
 from itechframework.modules.robot_browser.browser_element import BrowserElement
+from itechframework.modules.waitutils import waituntiltrue
 
 
 class Browser:
     def __init__(self, driver, name):
         self.driver: WebDriver = driver
+        self.alert = None
         self.name = name
 
     @keyword(name='Close browser')
@@ -68,3 +70,14 @@ class Browser:
             cookies = json.load(cookieloader)
         for cookie in cookies:
             self.driver.add_cookie(cookie)
+
+    def switch_to_alert(self):
+        return self.driver.switch_to.alert
+
+    @waituntiltrue(timeout=7)
+    def wait_for_alert(self):
+        try:
+            self.alert = self.switch_to_alert()
+        except Exception:
+            return False
+        return True

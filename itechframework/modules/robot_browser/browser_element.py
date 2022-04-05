@@ -25,6 +25,8 @@ def updateifstale(func, max_attempts=5):
 
 
 class BrowserElement:
+    GOOGLE_AD_BANNER_CLOSE_LOCATOR = '//a[@id="close-fixedban"]'
+
     def __init__(self, element, by, locator):
         from itechframework.modules.browser_manager.BrowserManager import BrowserManager
 
@@ -64,7 +66,7 @@ class BrowserElement:
         except ElementClickInterceptedException:
             warn(f'Element by {self.by!r} {self.locator!r} is obstructed!'
                  f'Looking for advert banners and closing them if possible...')
-            ad_banner_close = self.browser.find_elements('xpath', '//a[@id="close-fixedban"]')
+            ad_banner_close = self.browser.find_elements('xpath', self.GOOGLE_AD_BANNER_CLOSE_LOCATOR)
             if ad_banner_close:
                 for i in ad_banner_close:
                     i.element.click()
