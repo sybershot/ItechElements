@@ -93,7 +93,7 @@ class ElementsSteps:
         page.browser.wait_for_alert()
         page.browser.alert.accept()
         if element := page.browser.find_element_or_raise('xpath', ElementsSteps.ALERT_CONFIRM_RESULT_LOCATOR):
-            info(f'Successfully accepted confirmed alert. Result: {element.element.text}')
+            info(f'Successfully accepted confirm alert.\nResult: {element.element.text}')
 
     @staticmethod
     @keyword(name="Test Input Alert")
