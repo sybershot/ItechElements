@@ -2,7 +2,7 @@ from robot.api.deco import keyword
 from robot.api.logger import info
 
 from itechframework.modules.robot_browser.browser import Browser
-from configuration.constants import DEMO_URL, ALERT_TEXT
+from configuration.config import DEMO_URL, ALERT_TEXT
 from project.page_objects.elemens_page import ElementsPage
 
 
@@ -14,6 +14,11 @@ class ElementsSteps:
     ALERT_BUTTONS_LOCATOR = '//button[contains(@id, "Button")]'
     ALERT_CONFIRM_RESULT_LOCATOR = '//span[@id="confirmResult"]'
     PROMPT_RESULT_LOCATOR = '//span[@id="promptResult"]'
+    BROWSER_WINDOWS_BUTTONS_LOCATOR = '//div[contains(@id, "Button")]/button'
+    SIMPLEHEADING_LOCATOR = '//h1[@id="sampleHeading"]'
+    EXPECTED_TEXT_TAB_WINDOW_LOCATOR = 'This is a sample page'
+    EXPECTED_TEXT_MESSAGE = 'Knowledge increases by sharing but not by saving. Please share this website with your friends and in your organization.'
+    MESSAGE_WINDOW_BODY_LOCATOR = '//body'
 
     @staticmethod
     @keyword(name="Open Demo")
@@ -105,3 +110,38 @@ class ElementsSteps:
         element = page.browser.find_element_or_raise('xpath', ElementsSteps.PROMPT_RESULT_LOCATOR)
         assert ALERT_TEXT in element.element.text, f'Cannot find {ALERT_TEXT} in {element.element.text}!'
         info(f'Successfully entered {ALERT_TEXT} in alert input.\nResult:{element.element.text}')
+
+    @staticmethod
+    @keyword(name="Open Windows")
+    def open_windows(page: ElementsPage):
+        page.open_submenu(page.menu_contents[0])
+        page.update_contents('xpath', ElementsSteps.BROWSER_WINDOWS_BUTTONS_LOCATOR)
+
+    @staticmethod
+    @keyword(name="Test New Tab")
+    def test_new_tab(page: ElementsPage):
+        page.page_contents[0].click_element()
+        ElementsSteps._test_tab(page, ElementsSteps.EXPECTED_TEXT_TAB_WINDOW_LOCATOR,
+                                ElementsSteps.SIMPLEHEADING_LOCATOR)
+
+    @staticmethod
+    @keyword(name="Test New Window")
+    def test_new_window(page: ElementsPage):
+        page.page_contents[1].click_element()
+        ElementsSteps._test_tab(page, ElementsSteps.EXPECTED_TEXT_TAB_WINDOW_LOCATOR,
+                                ElementsSteps.SIMPLEHEADING_LOCATOR)
+
+    @staticmethod
+    @keyword(name="Test New Message Window")
+    def test_new_message_window(page: ElementsPage):
+        page.page_contents[2].click_element()
+        ElementsSteps._test_tab(page, ElementsSteps.EXPECTED_TEXT_MESSAGE,
+                                ElementsSteps.MESSAGE_WINDOW_BODY_LOCATOR)
+
+    @staticmethod
+    def _test_tab(page, expected_text, locator):
+        page.browser.driver.switch_to.window(page.browser.driver.window_handles[-1])
+        heading = page.browser.find_element_or_raise('xpath', locator)
+        assert expected_text in heading.element.text, f'Cannot find {expected_text} in {heading.element.text}'
+        page.browser.driver.execute_script("window.close('');")
+        page.browser.driver.switch_to.window(page.browser.driver.window_handles[0])

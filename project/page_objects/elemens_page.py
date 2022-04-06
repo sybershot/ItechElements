@@ -23,7 +23,6 @@ class ElementsPage(BasePage):
 
     def open_menu(self, menu_element: BrowserElement):
         if menu_element.element.find_element('xpath', '..').text in menu_element.element.text:
-            info(f'Menu element {menu_element.by} {menu_element.locator} is closed, opening now.')
             menu_element.move_to_element()
             menu_element.click_element()
             self.browser.wait_until_visible('xpath', self.MENU_ELEMENTS_LOCATOR)

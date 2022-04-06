@@ -60,7 +60,7 @@ class BrowserElement:
         try:
             if self.wait_clickable():
                 self.log_screenshot()
-                self.element.click()
+                self.browser.driver.execute_script("arguments[0].click();", self.element)
             else:
                 return False
         except ElementClickInterceptedException:
@@ -74,7 +74,7 @@ class BrowserElement:
 
     def move_to_element(self):
         debug(f'Moving to {self.by!r} {self.locator!r}')
-        self.browser.driver.execute_script("arguments[0].scrollIntoView();", self.element)
+        self.browser.driver.execute_script("arguments[0].scrollIntoView(false);", self.element)
 
     def log_screenshot(self):
         info(f'<img src="data:image/png;base64, {self.element.screenshot_as_base64}">', html=True)
