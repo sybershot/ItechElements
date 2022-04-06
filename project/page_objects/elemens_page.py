@@ -1,4 +1,4 @@
-from robot.api.logger import info, error
+from robot.api.logger import error
 
 from itechframework.modules.robot_browser.browser import Browser
 from itechframework.modules.base_page.base_page import BasePage
